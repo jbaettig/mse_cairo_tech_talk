@@ -1,17 +1,21 @@
-/// Interface representing `HelloContract`.
-/// This interface allows modification and retrieval of the contract balance.
+/// interface representing `SimpleBalance`
 #[starknet::interface]
-pub trait IHelloStarknet<TContractState> {
-    /// Increase contract balance.
+pub trait ISimpleBalance<TContractState> {
+    /// increase contract balance
     fn increase_balance(ref self: TContractState, amount: felt252);
-    /// Retrieve contract balance.
+
+    /// retrieve contract balance
     fn get_balance(self: @TContractState) -> felt252;
 }
 
-/// Simple contract for managing balance.
+/// simple balance contract
 #[starknet::contract]
-mod HelloStarknet {
+mod SimpleBalance {
     use core::starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
+
+    mod Errors {
+        pub const NOT_ZERO: felt252 = 'Balance: Amount cannot be 0.';
+    }
 
     #[storage]
     struct Storage {
@@ -19,9 +23,9 @@ mod HelloStarknet {
     }
 
     #[abi(embed_v0)]
-    impl HelloStarknetImpl of super::IHelloStarknet<ContractState> {
+    impl SimpleBalanceImpl of super::ISimpleBalance<ContractState> {
         fn increase_balance(ref self: ContractState, amount: felt252) {
-            assert(amount != 0, 'Amount cannot be 0');
+            assert(amount != 0, Errors::NOT_ZERO);
             self.balance.write(self.balance.read() + amount);
         }
 
