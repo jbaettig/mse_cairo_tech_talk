@@ -14,7 +14,6 @@ pub impl CircleImpl of Geometry<Circle> {
     fn boundary(self: @Circle) -> u64 {
         // the '*' refers to the 'despan' operator
         // which serves as the oposite of the 'snapshot'.
-        // It enables us to return a u64 instead of an @u64.
         2 * PI * *self.radius
     }
 
