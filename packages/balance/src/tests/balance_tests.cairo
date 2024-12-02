@@ -4,9 +4,9 @@ use balance::simple_balance::ISimpleBalanceSafeDispatcher;
 use balance::simple_balance::ISimpleBalanceSafeDispatcherTrait;
 
 #[test]
-#[available_gas(180)]
+#[available_gas(240)]
 fn test_increase_balance() {
-    let contract_address = utility::deploy_contract("SimpleBalance", ArrayTrait::new());
+    let contract_address = utility::deploy_contract("SimpleBalance", balance_params());
     let balance_dispatcher = ISimpleBalanceDispatcher { contract_address };
 
     let balance_before = balance_dispatcher.get_balance();
@@ -22,7 +22,7 @@ fn test_increase_balance() {
 #[available_gas(110)]
 #[should_panic(expected: ('Balance: Amount cannot be 0.',))]
 fn test_increase_balance_with_zero() {
-    let contract_address = utility::deploy_contract("SimpleBalance", ArrayTrait::new());
+    let contract_address = utility::deploy_contract("SimpleBalance", balance_params());
     let balance_dispatcher = ISimpleBalanceDispatcher { contract_address };
 
     let balance_before = balance_dispatcher.get_balance();
@@ -33,10 +33,10 @@ fn test_increase_balance_with_zero() {
 }
 
 #[test]
-#[available_gas(110)]
+#[available_gas(180)]
 #[feature("safe_dispatcher")]
 fn test_increase_balance_with_zero_safe() {
-    let contract_address = utility::deploy_contract("SimpleBalance", ArrayTrait::new());
+    let contract_address = utility::deploy_contract("SimpleBalance", balance_params());
 
     let balance_dispatcher = ISimpleBalanceSafeDispatcher { contract_address };
 
@@ -49,4 +49,16 @@ fn test_increase_balance_with_zero_safe() {
             assert(*panic_data.at(0) == 'Balance: Amount cannot be 0.', *panic_data.at(0));
         }
     };
+}
+
+fn owner() -> core::starknet::ContractAddress {
+    core::starknet::contract_address_const::<128>()
+}
+
+fn balance_params() -> Array<felt252> {
+    let mut calldata = array![];
+    // owner address
+    calldata.append(owner().into());
+
+    calldata
 }

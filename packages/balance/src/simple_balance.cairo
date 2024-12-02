@@ -11,10 +11,13 @@ pub trait ISimpleBalance<TContractState> {
 /// simple balance contract
 #[starknet::contract]
 mod SimpleBalance {
+    use core::starknet::{ContractAddress, get_execution_info};
     use core::starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess};
 
+    // some error messages as felts
     mod Errors {
         pub const NOT_ZERO: felt252 = 'Balance: Amount cannot be 0.';
+        pub const NOT_OWNER: felt252 = 'Balance: You are not the owner.';
     }
 
     #[storage]
